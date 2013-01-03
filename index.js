@@ -22,12 +22,11 @@ Journeyman.prototype.handle = function(req, res) {
     index = index + 1;
     self.middleware[index](req, res, next);
   }
-
-  this.middleware[index](req, res, next);
+  self.middleware[index](req, res, next);
 }
 
 Journeyman.prototype.use = function(func) {
-  this.middleware.push(func);
+  this.middleware.unshift(func);
 }
 
 module.exports = Journeyman
