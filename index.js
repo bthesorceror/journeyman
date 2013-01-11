@@ -20,7 +20,7 @@ Journeyman.prototype.handle = function(req, res) {
 
   function next() {
     index = index + 1;
-    self.middleware[index](req, res, next);
+    self.middleware[index] && self.middleware[index](req, res, next);
   }
   self.middleware[index](req, res, next);
 }
