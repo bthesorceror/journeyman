@@ -1,5 +1,5 @@
 var Journeyman = require('../index.js'),
-    Zombie     = require('zombie');
+    Zombie     = require('zombie'),
     assert     = require('assert');
 
 describe('Journeyman', function() {
