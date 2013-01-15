@@ -1,11 +1,11 @@
 var http = require('http');
 
-function Journeyman(port, mw, initial) {
+function Journeyman(port, options) {
+  options = options || {};
   var self = this;
-  this.middleware = mw || []
-  if (initial) { this.use(initial); }
-  this.port = port;
-  this.server = http.createServer(function(req, res) {
+  self.middleware = options['middleware'] || []
+  self.port = port;
+  self.server = http.createServer(function(req, res) {
     self.handle.call(self, req, res);
   });
 }
@@ -22,6 +22,7 @@ Journeyman.prototype.handle = function(req, res) {
     index = index + 1;
     self.middleware[index] && self.middleware[index](req, res, next);
   }
+
   self.middleware[index](req, res, next);
 }
 
