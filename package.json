@@ -1,6 +1,6 @@
 {
   "name": "journeyman",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "thin wrapper for middleware with node's http server",
   "main": "index.js",
   "scripts": {
@@ -18,6 +18,5 @@
   },
   "author": "Brandon Farmer",
   "license": "BSD",
-  "dependencies": {
-  }
+  "dependencies": {}
 }
