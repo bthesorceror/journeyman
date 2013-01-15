@@ -15,16 +15,16 @@ var port = 3000,
     server = new Journeyman(port);
 
 server.use(function(req, res) {
-    res.writeHead(200);
-    res.end(res.params);
-    });
+  res.writeHead(200);
+  res.end(res.params);
+});
 
 server.use(function(req, res, next) { next(); });
 
 server.use(function(req, res, next) {
-    res.params = 'WHERE AM I??';
-    next();
-    });
+  res.params = 'WHERE AM I??';
+  next();
+});
 
 server.listen();
 ```
