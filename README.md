@@ -9,7 +9,7 @@ Example
 ==============================
 
 ```ruby
-var Journeyman = require('../index.js');
+var Journeyman = require('journeyman');
 
 var port = 3000,
     server = new Journeyman(port);
