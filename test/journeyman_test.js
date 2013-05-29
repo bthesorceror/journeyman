@@ -1,17 +1,21 @@
 var Journeyman = require('../index.js'),
     mockery    = require('mockery'),
     sinon      = require('sinon'),
-    assert     = require('assert'),
-    stream     = require('stream');
+    assert     = require('assert');
 
 
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
+function noopResponse() {
+}
+noopResponse.prototype.end = function() {
+}
+
 describe('Journeyman', function() {
 
-  var response = new stream.Writable();
+  var response = new noopResponse();
 
   describe('listen function', function() {
     var listenSpy = sinon.spy();
