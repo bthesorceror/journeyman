@@ -1,9 +1,17 @@
 var Journeyman = require('../index.js'),
     mockery    = require('mockery'),
     sinon      = require('sinon'),
-    assert     = require('assert');
+    assert     = require('assert'),
+    stream     = require('stream');
+
+
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 describe('Journeyman', function() {
+
+  var response = new stream.Writable();
 
   describe('listen function', function() {
     var listenSpy = sinon.spy();
@@ -17,7 +25,7 @@ describe('Journeyman', function() {
 
     it('should call listen on http server', function() {
       mockery.enable({ useCleanCache: true });
-      mockery.registerAllowable('../index');
+      mockery.registerAllowables(['../index', 'events', 'util']);
       mockery.registerMock('http', httpMock);
       var jm = require('../index'),
           server = new jm(3000);
@@ -36,8 +44,7 @@ describe('Journeyman', function() {
     });
 
     it('should call the first middleware', function(done) {
-      var response = "HELLO",
-          request  = "WORLD";
+      var request  = "WORLD",
           server   = new Journeyman(3000);
       server.use(function(req, res) {
         assert.deepEqual(req, request);
@@ -48,8 +55,7 @@ describe('Journeyman', function() {
     });
 
     it('should pass along request and response', function(done) {
-      var response = {},
-          request  = "WORLD";
+      var request  = "WORLD";
           server   = new Journeyman(3000);
       server.use(function(req, res) {
         assert.deepEqual(res.params, 'WHERE AM I??');
@@ -62,6 +68,34 @@ describe('Journeyman', function() {
       });
       server.handle(request, response);
     });
+  });
+
+  describe('events', function() {
+    var server = new Journeyman(3000),
+        request  = 'request';
+
+    server.use(function(req, res) {
+      res.end();
+    });
+
+    it('should emit a "start" event with response and request', function(done){
+      server.once('start', function(req, res){
+        assert.equal(req, request);
+        assert.equal(res, response);
+        done();
+      });
+      server.handle(request, response);
+    })
+
+    it('should emit a "end" event with response, request and time', function(done){
+      server.once('end', function(req, res, time){
+        assert.equal(req, request);
+        assert.equal(res, response);
+        assert.ok(isNumber(time));
+        done();
+      });
+      server.handle(request, response);
+    })
   });
 
   describe('use function', function() {
