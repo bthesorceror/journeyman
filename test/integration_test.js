@@ -10,16 +10,28 @@ describe('Journeyman', function() {
     res.writeHead(200);
     res.write(res.params);
     res.end();
-  });
+  }, 'output');
 
-  server.use(function(req, res, next) { next(); });
+  server.use(function(req, res, next) { next(); }, 'noop');
 
   server.use(function(req, res, next) {
     res.params = 'WHERE AM I??';
     next();
-  });
+  }, 'params setter');
 
   server.listen();
+
+  // server.on('startMiddleware', function(req, res, name) {
+  //   console.log('********************************');
+  //   console.log('Middleware: ' + name + ' has started');
+  //   console.log('********************************');
+  // });
+
+  // server.on('endMiddleware', function(req, res, name, time) {
+  //   console.log('********************************');
+  //   console.log('Middleware: ' + name + ' completed in ' + time + ' seconds');
+  //   console.log('********************************');
+  // });
 
   // server.on('start', function(req, res) {
   //   console.log('********************************');

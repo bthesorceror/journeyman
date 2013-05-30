@@ -75,23 +75,47 @@ describe('Journeyman', function() {
   });
 
   describe('events', function() {
-    var server = new Journeyman(3000),
-        request  = 'request';
+    var server  = new Journeyman(3000),
+        request = 'request',
+        mwName  = "mwtest";
 
     server.use(function(req, res) {
       res.end();
+    }, mwName);
+
+    it('should emit a "startMiddleware" event with name', function(done){
+      server.once('startMiddleware', function(req, res, name) {
+        assert.equal(req, request);
+        assert.equal(res, response);
+        assert.equal(name, 'mwtest');
+        done();
+      });
+
+      server.handle(request, response);
     });
 
-    it('should emit a "start" event with response and request', function(done){
+    it('should emit a "endMiddleware" event with name', function(done){
+      server.once('endMiddleware', function(req, res, name, time) {
+        assert.equal(req, request);
+        assert.equal(res, response);
+        assert.equal(name, 'mwtest');
+        assert.ok(isNumber(time));
+        done();
+      });
+
+      server.handle(request, response);
+    });
+
+    it('should emit a "start" event with response and request', function(done) {
       server.once('start', function(req, res){
         assert.equal(req, request);
         assert.equal(res, response);
         done();
       });
       server.handle(request, response);
-    })
+    });
 
-    it('should emit a "end" event with response, request and time', function(done){
+    it('should emit a "end" event with response, request and time', function(done) {
       server.once('end', function(req, res, time){
         assert.equal(req, request);
         assert.equal(res, response);
@@ -99,7 +123,40 @@ describe('Journeyman', function() {
         done();
       });
       server.handle(request, response);
-    })
+    });
+
+    describe('multiple events', function() {
+      var server  = new Journeyman(3000);
+
+      server.use(function(req, res) { res.end(); });
+      server.use(function(req, res, next) { next(); }, 'test');
+
+      afterEach(function(){
+        server.removeAllListeners();
+      });
+
+      it('should emit a "startmiddleware" event for multiple events', function(done){
+        var count = 0;
+        server.on('startMiddleware', function(req, res, name) {
+          count += 1;
+          if (count == 1) { assert.equal(name, 'test') }
+          if (count == 2) { assert.equal(name, 'default'); done(); }
+        });
+        server.handle(request, response);
+      });
+
+      it('should emit a "endMiddleware" event for multiple events', function(done){
+        var count = 0;
+        server.on('endMiddleware', function(req, res, name, time) {
+          count += 1;
+          if (count == 1) { assert.equal(name, 'test') }
+          if (count == 2) { assert.equal(name, 'default'); done(); }
+          assert.ok(isNumber(time));
+        });
+        server.handle(request, response);
+      });
+
+    });
   });
 
   describe('use function', function() {
