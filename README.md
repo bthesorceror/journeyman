@@ -34,7 +34,10 @@ going to http://localhost:3000 will render out a success with the contents "WHER
 Now with time profiling
 =======================
 
-Journey will emit events at the start and end of every request-response cycle
+Journeyman will emit events at the start and end of every request-response cycle
+
+Events
+------
 
 "start"
 
@@ -59,4 +62,39 @@ server.on('end', function(req, res, time) {
   console.log('********************************');
 });
 
+```
+
+Middleware time profiling
+=========================
+
+Journeyman will also emit events at the beginning and end of each middleware
+
+server.use(function(req, res, next) {
+  res.params = 'WHERE AM I??';
+  next();
+}, 'middleware name');
+
+Middleware name will default to 'default' if it is not set.
+
+Events
+------
+
+"startMiddleware"
+
+```javascript
+server.on('startMiddleware', function(req, res, name) {
+  console.log('********************************');
+  console.log('Middleware: ' + name + ' has started');
+  console.log('********************************');
+});
+```
+
+"endMiddleware"
+
+```javascript
+server.on('endMiddleware', function(req, res, name, time) {
+  console.log('********************************');
+  console.log('Middleware: ' + name + ' completed in ' + time + ' seconds');
+  console.log('********************************');
+});
 ```
