@@ -69,10 +69,12 @@ Middleware time profiling
 
 Journeyman will also emit events at the beginning and end of each middleware
 
+```javascript
 server.use(function(req, res, next) {
   res.params = 'WHERE AM I??';
   next();
 }, 'middleware name');
+```
 
 Middleware name will default to 'default' if it is not set.
 
