@@ -10,7 +10,6 @@ function handle404(req, res) {
 }
 
 function Journeyman(port) {
-  EventEmitter.call(this);
   this.port = port;
   this.use(handle404);
   this.setupServer();
@@ -33,12 +32,11 @@ Journeyman.prototype.handle = function(req, res) {
   var index = 0;
   var self  = this;
 
-  var time = Profiler.profile(function() {
-    self.emit('start', req, res);
-    self.middleware.run(req, res);
-  });
+  self.emit('start', req, res);
 
-  self.emit('end', req, res, time);
+  self.emit('end', req, res, Profiler.profile(function() {
+    self.middleware.run(req, res);
+  }));
 }
 
 Journeyman.prototype.pipeEvent = function(event) {

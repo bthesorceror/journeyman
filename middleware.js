@@ -36,7 +36,6 @@ Middleware.prototype.generateEnd = function(req, res, profiler) {
 Middleware.prototype.run = function(req, res) {
   var profiler = new Profiler();
   this.emit('started', req, res, this.name);
-  var end = res.end;
   this.generateEnd(req, res, profiler);
   this.func(req, res, this.generateNext(req, res, profiler));
 }
