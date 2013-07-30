@@ -29,7 +29,7 @@ describe('Journeyman', function() {
 
     it('should call listen on http server', function() {
       mockery.enable({ useCleanCache: true });
-      mockery.registerAllowables(['../index', 'events', 'util']);
+      mockery.registerAllowables(['../index', 'events', 'util', './profiler']);
       mockery.registerMock('http', httpMock);
       var jm = require('../index'),
           server = new jm(3000);
@@ -61,15 +61,18 @@ describe('Journeyman', function() {
     it('should pass along request and response', function(done) {
       var request  = "WORLD";
           server   = new Journeyman(3000);
+
       server.use(function(req, res) {
         assert.deepEqual(res.params, 'WHERE AM I??');
         done();
       });
+
       server.use(function(req, res, next) { next(); });
       server.use(function(req, res, next) {
         res.params = 'WHERE AM I??';
         next();
       });
+
       server.handle(request, response);
     });
   });
@@ -163,14 +166,14 @@ describe('Journeyman', function() {
     it('should add middleware', function() {
       var server = new Journeyman(3000);
       server.use('blah');
-      assert.deepEqual(server.middleware, ['blah']);
+      assert.deepEqual(server.middleware.func, 'blah');
     });
 
     it('should add middleware in the correct order', function() {
       var server = new Journeyman(3000);
       server.use('blah');
       server.use('rot');
-      assert.deepEqual(server.middleware, ['rot', 'blah']);
+      assert.deepEqual(server.middleware.func, 'rot');
     });
   });
 
