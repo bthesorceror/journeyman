@@ -4,13 +4,15 @@ var http         = require('http'),
     Profiler     = require('./profiler'),
     EventEmitter = require('events').EventEmitter;
 
+function handle404(req, res) {
+  res.writeHead(404);
+  res.end('Page not found');
+}
 
-function Journeyman(port, options) {
+function Journeyman(port) {
   EventEmitter.call(this);
-  options = options || {};
-  this.middleware = options['middleware'] || []
-  this.middleware_names = options['middleware_names'] || []
   this.port = port;
+  this.use(handle404);
   this.setupServer();
 }
 
