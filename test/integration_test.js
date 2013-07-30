@@ -47,8 +47,9 @@ describe('Journeyman', function() {
   // });
 
   it('works all together', function(done) {
-    var zombie = new Zombie();
-    zombie.visit("http://localhost:" + port, function() {
+    var zombie = new Zombie(),
+        url    = "http://localhost:" + port;
+    zombie.visit(url, function() {
       assert.ok(zombie.success);
       assert.equal(zombie.text(), "WHERE AM I??");
       done();
