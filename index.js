@@ -39,21 +39,29 @@ Journeyman.prototype.handle = function(req, res) {
   self.emit('end', req, res, time);
 }
 
+Journeyman.prototype.pipeEvent = function(event) {
+  var self = this;
+  return function() {
+    args = Array.prototype.slice.call(arguments, 0);
+    self.emit.apply(self, [event].concat(args));
+  }
+}
+
+Journeyman.prototype.handleMiddlewareFinish = function() {
+  return this.pipeEvent('endMiddleware');
+}
+
+Journeyman.prototype.handleMiddlewareStart = function() {
+  return this.pipeEvent('startMiddleware');
+}
+
 Journeyman.prototype.use = function(func, name) {
   var middleware = new Middleware(func, name, this.middleware);
+
+  middleware.on('finished', this.handleMiddlewareFinish());
+  middleware.on('started', this.handleMiddlewareStart());
+
   this.middleware = middleware;
-
-  var self = this;
-
-  middleware.on('finished', function() {
-    args = Array.prototype.slice.call(arguments, 0);
-    self.emit.apply(self, ['endMiddleware'].concat(args));
-  });
-
-  middleware.on('started', function() {
-    args = Array.prototype.slice.call(arguments, 0);
-    self.emit.apply(self, ['startMiddleware'].concat(args));
-  });
 }
 
 module.exports = Journeyman
