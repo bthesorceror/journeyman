@@ -29,7 +29,7 @@ describe('Journeyman', function() {
 
     it('should call listen on http server', function() {
       mockery.enable({ useCleanCache: true });
-      mockery.registerAllowables(['../index', 'events', 'util', './profiler']);
+      mockery.registerAllowables(['../index', 'events', 'util', './profiler', './middleware']);
       mockery.registerMock('http', httpMock);
       var jm = require('../index'),
           server = new jm(3000);
