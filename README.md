@@ -31,6 +31,17 @@ server.listen();
 
 going to http://localhost:3000 will render out a success with the contents "WHERE AM I??"
 
+SSL support
+===========
+
+Pass the path to both the ssl key and certificate
+
+```javascript
+
+var journeyman = new Journeyman(3001, { key: 'path/to/key', cert: 'path/to/certificate' });
+
+```
+
 Now with time profiling
 =======================
 
