@@ -12,7 +12,6 @@
   },
   "devDependencies": {
     "mocha": "~1.8.1",
-    "mockery": "~1.4.0",
     "sinon": "~1.5.2",
     "zombie": "~2.0.0-alpha19"
   },

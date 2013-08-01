@@ -1,6 +1,7 @@
 var Journeyman = require('../index.js'),
-    mockery    = require('mockery'),
     sinon      = require('sinon'),
+    path       = require('path'),
+    fs         = require('fs'),
     assert     = require('assert');
 
 
@@ -17,27 +18,54 @@ describe('Journeyman', function() {
 
   var response = new noopResponse();
 
-  describe('listen function', function() {
-    var listenSpy = sinon.spy();
-    var httpMock = {
-      createServer: function(func) {
-        return {
-          listen: listenSpy
-        }
-      }
-    }
+  describe("Initialization", function() {
 
-    it('should call listen on http server', function() {
-      mockery.enable({ useCleanCache: true });
-      mockery.registerAllowables(['../index', 'events', 'util', './profiler', './middleware']);
-      mockery.registerMock('http', httpMock);
-      var jm = require('../index'),
-          server = new jm(3000);
-      server.listen();
-      assert(listenSpy.calledWith(3000));
-      mockery.deregisterAll;
-      mockery.disable();
+    it('setups correct https options', function() {
+      var key_path = path.join(__dirname, 'key.txt'),
+          cert_path = path.join(__dirname, 'cert.txt');
+
+      var server = new Journeyman(3001, { key: key_path, cert: cert_path });
+
+      var options = {
+        key: fs.readFileSync(key_path),
+        cert: fs.readFileSync(cert_path)
+      }
+
+      assert.equal(server.httpsOptions().key.toString(), options.key.toString());
+      assert.equal(server.httpsOptions().cert.toString(), options.cert.toString());
     });
+
+  });
+
+  describe('Server type', function() {
+
+    it('sets server type to http', function() {
+      var server = new Journeyman(3001);
+      assert.deepEqual(server.createServer().prototype, require('http').prototype)
+    });
+
+    it('sets server type to https', function() {
+      var key_path = path.join(__dirname, 'key.pem'),
+          cert_path = path.join(__dirname, 'cert.pem');
+
+      var server = new Journeyman(3001, { key: key_path, cert: cert_path });
+
+      assert.deepEqual(server.createServer().prototype, require('https').prototype)
+    });
+
+  });
+
+  describe('listen function', function() {
+
+    it('calls listen on server with port', function() {
+      var server = new Journeyman(3001, { https: true });
+      var spy = sinon.spy();
+
+      server.server = function() { return { listen: spy }; };
+      server.listen();
+      assert(spy.calledWith(3001));
+    });
+
   });
 
   describe('handle function', function() {
@@ -50,17 +78,19 @@ describe('Journeyman', function() {
     it('should call the first middleware', function(done) {
       var request  = "WORLD",
           server   = new Journeyman(3000);
+
       server.use(function(req, res) {
         assert.deepEqual(req, request);
         assert.deepEqual(res, response);
         done();
       });
+
       server.handle(request, response);
     });
 
     it('should pass along request and response', function(done) {
       var request  = "WORLD";
-          server   = new Journeyman(3000);
+      server   = new Journeyman(3000);
 
       server.use(function(req, res) {
         assert.deepEqual(res.params, 'WHERE AM I??');
@@ -79,8 +109,8 @@ describe('Journeyman', function() {
 
   describe('events', function() {
     var server  = new Journeyman(3000),
-        request = 'request',
-        mwName  = "mwtest";
+    request = 'request',
+    mwName  = "mwtest";
 
     server.use(function(req, res) {
       res.end();
