@@ -4,13 +4,13 @@ var Journeyman = require('../index.js'),
     fs         = require('fs'),
     assert     = require('assert');
 
-
 function isNumber(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 function noopResponse() {
 }
+
 noopResponse.prototype.end = function() {
 }
 
@@ -193,6 +193,7 @@ describe('Journeyman', function() {
   });
 
   describe('use function', function() {
+
     it('should add middleware', function() {
       var server = new Journeyman(3000);
       server.use('blah');
