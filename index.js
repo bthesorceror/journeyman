@@ -47,10 +47,9 @@ Journeyman.prototype.server = function() {
 }
 
 Journeyman.prototype.handler = function() {
-  var self = this;
   return function(req, res) {
-    self.handle.call(self, req, res);
-  }
+    this.handle.call(this, req, res);
+  }.bind(this);
 }
 
 Journeyman.prototype.listen = function() {
@@ -59,21 +58,19 @@ Journeyman.prototype.listen = function() {
 
 Journeyman.prototype.handle = function(req, res) {
   var index = 0;
-  var self  = this;
 
   this.emit('start', req, res);
 
   this.emit('end', req, res, Profiler.profile(function() {
-    self.middleware.run(req, res);
-  }));
+    this.middleware.run(req, res);
+  }.bind(this)));
 }
 
 Journeyman.prototype.pipeEvent = function(event) {
-  var self = this;
   return function() {
     args = Array.prototype.slice.call(arguments, 0);
-    self.emit.apply(self, [event].concat(args));
-  }
+    this.emit.apply(this, [event].concat(args));
+  }.bind(this)
 }
 
 Journeyman.prototype.handleMiddlewareFinish = function() {
