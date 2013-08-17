@@ -57,13 +57,16 @@ Journeyman.prototype.listen = function() {
 }
 
 Journeyman.prototype.handle = function(req, res) {
-  var index = 0;
-
+  try {
   this.emit('start', req, res);
 
   this.emit('end', req, res, Profiler.profile(function() {
     this.middleware.run(req, res);
   }.bind(this)));
+  } catch (ex) {
+    res.writeHead(500);
+    res.end('There was an error.');
+  }
 }
 
 Journeyman.prototype.pipeEvent = function(event) {

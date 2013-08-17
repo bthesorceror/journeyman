@@ -208,4 +208,25 @@ describe('Journeyman', function() {
     });
   });
 
+  describe('exceptions', function() {
+
+    it('should render a 500', function() {
+      var server = new Journeyman(3000);
+
+      var res = {
+        writeHead: sinon.spy(),
+        end: function() { }
+      };
+
+      server.use(function(req, res, next) {
+        fs.readFileSync('doesnotexist.png');
+      });
+
+      server.handle({}, res);
+
+      assert.ok(res.writeHead.calledWith(500));
+    });
+
+  });
+
 });
