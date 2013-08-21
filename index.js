@@ -79,8 +79,14 @@ Journeyman.prototype.handleMiddlewareStart = function() {
   return this.pipeEvent('startMiddleware');
 }
 
+Journeyman.prototype.handleError = function(request, response, error) {
+  response.writeHead(500);
+  response.end(error);
+}
+
+
 Journeyman.prototype.use = function(func, name) {
-  var middleware = new Middleware(func, name, this.middleware);
+  var middleware = new Middleware(func.bind(this), name, this.middleware);
 
   middleware.on('finished', this.handleMiddlewareFinish());
   middleware.on('started', this.handleMiddlewareStart());

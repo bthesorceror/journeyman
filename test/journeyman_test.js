@@ -14,6 +14,8 @@ function noopResponse() {
 noopResponse.prototype.end = function() {
 }
 
+noopResponse.prototype.writeHead = function() {}
+
 describe('Journeyman', function() {
 
   var response = new noopResponse();
@@ -194,39 +196,53 @@ describe('Journeyman', function() {
 
   describe('use function', function() {
 
+    var blah = function() {}
+    var rot = function() {}
     it('should add middleware', function() {
       var server = new Journeyman(3000);
-      server.use('blah');
-      assert.deepEqual(server.middleware.func, 'blah');
+      server.use(blah, 'blah');
+      assert.deepEqual(server.middleware.name, 'blah');
     });
 
     it('should add middleware in the correct order', function() {
       var server = new Journeyman(3000);
-      server.use('blah');
-      server.use('rot');
-      assert.deepEqual(server.middleware.func, 'rot');
+      server.use(blah, 'blah');
+      server.use(rot, 'rot');
+      assert.deepEqual(server.middleware.name, 'rot');
     });
   });
 
-  describe('exceptions', function() {
+  describe('correct context', function() {
+    it("journeyman should be the middleware's context", function(done) {
+      var request  = "WORLD",
+          server   = new Journeyman(3000);
 
-    it('should render a 500', function() {
+      server.use(function(req, res) {
+        assert.equal(this, server);
+        done();
+      });
+
+      server.handle(request, response);
+    });
+  });
+
+  describe('handling errors', function() {
+    it("calling handleError renders a 500",  function() {
       var server = new Journeyman(3000);
 
       var res = {
         writeHead: sinon.spy(),
-        end: function() { }
+        end: sinon.spy()
       };
 
       server.use(function(req, res, next) {
-        fs.readFileSync('doesnotexist.png');
+        this.handleError(req, res, "EPIC FAIL");
       });
 
       server.handle({}, res);
 
       assert.ok(res.writeHead.calledWith(500));
+      assert.ok(res.end.calledWith("EPIC FAIL"));
     });
-
   });
-
 });
