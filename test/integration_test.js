@@ -3,7 +3,7 @@ var Journeyman = require('../index.js'),
     assert     = require('assert');
 
 describe('Journeyman', function() {
-  var port = 3000,
+  var port = 9999,
       server = new Journeyman(port);
 
   server.use(function(req, res) {
