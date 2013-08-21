@@ -1,12 +1,10 @@
-Journeyman
-==========
+# Journeyman
 
 [![Build Status](https://travis-ci.org/bthesorceror/journeyman.png?branch=master)](https://travis-ci.org/bthesorceror/journeyman)
 
 thin wrapper for middleware with node's http server
 
-Example
-=======
+## Example
 
 ```javascript
 var Journeyman = require('journeyman');
@@ -31,60 +29,46 @@ server.listen();
 
 going to http://localhost:3000 will render out a success with the contents "WHERE AM I??"
 
-SSL support
-===========
+## SSL support
 
 Pass the path to both the ssl key and certificate
 
 ```javascript
-
 var journeyman = new Journeyman(3001, { key: 'path/to/key', cert: 'path/to/certificate' });
-
 ```
 
-Now with time profiling
-=======================
+## Now with time profiling
 
 Journeyman will emit events at the start and end of every request-response cycle
 
-Events
-------
-
-"start"
+### The `Start` Event
 
 ```javascript
-
 server.on('start', function(req, res) {
   console.log('********************************');
   console.log('Response started');
   console.log('********************************');
 });
-
-
 ```
 
-"end"
+### The `End` Event
 
 ```javascript
-
 server.on('end', function(req, res, time) {
   console.log('********************************');
   console.log('Response completed in ' + time + ' seconds');
   console.log('********************************');
 });
-
 ```
 
-Middleware error handling
-=========================
+## Middleware error handling
 
 The Middleware function has access to Journeyman itself through `this`.
 
 In your middleware you should handle errors by calling 'this.handleError' with request, response and an error string.
 
 
-Middleware time profiling
-=========================
+## Middleware time profiling
 
 Journeyman will also emit events at the beginning and end of each middleware
 
@@ -97,10 +81,7 @@ server.use(function(req, res, next) {
 
 Middleware name will default to 'default' if it is not set.
 
-Events
-------
-
-"startMiddleware"
+### The `startMiddleware` Event
 
 ```javascript
 server.on('startMiddleware', function(req, res, name) {
@@ -110,7 +91,7 @@ server.on('startMiddleware', function(req, res, name) {
 });
 ```
 
-"endMiddleware"
+### The `endMiddleware` Event
 
 ```javascript
 server.on('endMiddleware', function(req, res, name, time) {
