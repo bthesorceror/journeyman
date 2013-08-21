@@ -75,6 +75,14 @@ server.on('end', function(req, res, time) {
 
 ```
 
+Middleware error handling
+=========================
+
+The Middleware function has access to Journeyman itself through `this`.
+
+In your middleware you should handle errors by calling 'this.handleError' with request, response and an error string.
+
+
 Middleware time profiling
 =========================
 
