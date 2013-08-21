@@ -4,6 +4,14 @@ var util         = require('util'),
 
 function Middleware(func, name, next) {
   this.func = func;
+  this.wrapped = function(req, res, next) {
+    try {
+      func(req, res, next);
+    } catch (ex) {
+      res.writeHead(500);
+      res.end('There was an error.');
+    }
+  };
   this.next = next;
   this.name = (name || 'default');
 }
@@ -37,7 +45,7 @@ Middleware.prototype.run = function(req, res) {
   var profiler = new Profiler();
   this.emit('started', req, res, this.name);
   this.generateEnd(req, res, profiler);
-  this.func(req, res, this.generateNext(req, res, profiler));
+  this.wrapped(req, res, this.generateNext(req, res, profiler));
 }
 
 module.exports = Middleware;
