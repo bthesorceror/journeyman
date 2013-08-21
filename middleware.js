@@ -19,22 +19,21 @@ function Middleware(func, name, next) {
 util.inherits(Middleware, EventEmitter);
 
 Middleware.prototype.generateNext = function(req, res, profiler) {
-  var self = this;
   return function() {
-    self.emit('finished', req, res, self.name, profiler.stop());
+    this.emit('finished', req, res, this.name, profiler.stop());
     res.switchBackEnd();
-    self.next.run(req, res);
-  }
+    this.next.run(req, res);
+  }.bind(this)
 }
 
 Middleware.prototype.generateEnd = function(req, res, profiler) {
-  var self = this;
   var original_end = res.end;
 
   res.end = function() {
-    self.emit('finished', req, res, self.name, profiler.stop());
+    this.emit('finished', req, res, this.name, profiler.stop());
     original_end.apply(res, arguments);
-  }
+    res.switchBackEnd();
+  }.bind(this)
 
   res.switchBackEnd = function() {
     res.end = original_end;
