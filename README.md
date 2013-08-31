@@ -100,3 +100,9 @@ server.on('endMiddleware', function(req, res, name, time) {
   console.log('********************************');
 });
 ```
+
+## Available middleware
+
+- [rivulet](http://github.com/bthesorceror/rivulet) -- For easy server sent events
+- [lightning_strike](http://github.com/bthesorceror/lightning_strike) -- For serving static content
+- [rudder](http://github.com/bthesorceror/rudder) -- For http routing
