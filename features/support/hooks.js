@@ -1,9 +1,10 @@
 var Journeyman = require('../../index');
 
+var port = 9999;
+
 module.exports = function() {
   this.Around("@with_middleware", function(runScenario) {
-    var port = 9999,
-    server = new Journeyman(port);
+    var server = this.server = new Journeyman(port);
 
     server.use(function(req, res) {
       res.writeHead(200);
@@ -28,8 +29,7 @@ module.exports = function() {
   });
 
   this.Around("@without_middleware", function(runScenario) {
-    var port = 9999,
-    server = new Journeyman(port);
+    var server = this.server = new Journeyman(port);
 
     server.listen();
 
@@ -40,8 +40,7 @@ module.exports = function() {
   });
 
   this.Around("@with_error_middleware", function(runScenario) {
-    var port = 9999,
-    server = new Journeyman(port);
+    var server = this.server = new Journeyman(port);
 
     server.use(function(req, res) {
       this.handleError(req, res, 'Failed to load page');
