@@ -4,7 +4,7 @@
   "description": "thin wrapper for middleware with node's http server",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha && echo '\nCucumber Features\n' && ./node_modules/.bin/cucumber.js"
   },
   "repository": {
     "type": "git",
@@ -13,7 +13,8 @@
   "devDependencies": {
     "mocha": "~1.8.1",
     "sinon": "~1.5.2",
-    "zombie": "~2.0.0-alpha19"
+    "zombie": "~2.0.0-alpha19",
+    "cucumber": "~0.3.1"
   },
   "author": "Brandon Farmer",
   "license": "BSD",
