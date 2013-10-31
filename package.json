@@ -1,6 +1,6 @@
 {
   "name": "journeyman",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "thin wrapper for middleware with node's http server",
   "main": "index.js",
   "scripts": {
