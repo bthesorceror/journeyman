@@ -1,7 +1,7 @@
 var Journeyman = require('../../index');
 
 module.exports = function() {
-  this.Around(function(runScenario) {
+  this.Around("@with_middleware", function(runScenario) {
     var port = 9999,
     server = new Journeyman(port);
 
@@ -18,6 +18,34 @@ module.exports = function() {
       res.params = 'WHERE AM I??';
       next();
     }, 'params setter');
+
+    server.listen();
+
+    runScenario(function(cb) {
+      server.close();
+      cb();
+    });
+  });
+
+  this.Around("@without_middleware", function(runScenario) {
+    var port = 9999,
+    server = new Journeyman(port);
+
+    server.listen();
+
+    runScenario(function(cb) {
+      server.close();
+      cb();
+    });
+  });
+
+  this.Around("@with_error_middleware", function(runScenario) {
+    var port = 9999,
+    server = new Journeyman(port);
+
+    server.use(function(req, res) {
+      this.handleError(req, res, 'Failed to load page');
+    });
 
     server.listen();
 
