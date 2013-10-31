@@ -2,6 +2,10 @@
 
 [![Build Status](https://travis-ci.org/bthesorceror/journeyman.png?branch=master)](https://travis-ci.org/bthesorceror/journeyman)
 
+[![NPM](https://nodei.co/npm-dl/journeyman.png)](https://nodei.co/npm/journeyman/)
+
+[![NPM](https://nodei.co/npm/journeyman.png?downloads=true)](https://nodei.co/npm/journeyman/)
+
 thin wrapper for middleware with node's http server
 
 ## Example
