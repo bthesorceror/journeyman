@@ -70,6 +70,19 @@ describe('Journeyman', function() {
 
   });
 
+  describe('listen function', function() {
+
+    it('calls listen on server with port', function() {
+      var server = new Journeyman(3001, { https: true });
+      var spy = sinon.spy();
+
+      server.server = function() { return { close: spy }; };
+      server.close();
+      assert(spy.called);
+    });
+
+  });
+
   describe('handle function', function() {
 
     it('should respond to being called', function() {

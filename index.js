@@ -56,6 +56,10 @@ Journeyman.prototype.listen = function() {
   this.server().listen(this.port);
 }
 
+Journeyman.prototype.close = function() {
+  this.server().close();
+}
+
 Journeyman.prototype.handle = function(req, res) {
   this.emit('start', req, res);
 
