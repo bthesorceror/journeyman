@@ -257,5 +257,23 @@ describe('Journeyman', function() {
       assert.ok(res.writeHead.calledWith(500));
       assert.ok(res.end.calledWith("EPIC FAIL"));
     });
+
+    it("calling next with error renders a 500",  function() {
+      var server = new Journeyman(3000);
+
+      var res = {
+        writeHead: sinon.spy(),
+        end: sinon.spy()
+      };
+
+      server.use(function(req, res, next) {
+        next("EPIC FAIL");
+      });
+
+      server.handle({}, res);
+
+      assert.ok(res.writeHead.calledWith(500));
+      assert.ok(res.end.calledWith("EPIC FAIL"));
+    });
   });
 });

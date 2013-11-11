@@ -84,13 +84,14 @@ Journeyman.prototype.handleMiddlewareStart = function() {
 }
 
 Journeyman.prototype.handleError = function(request, response, error) {
+  if (typeof error != 'string') error = error.toString();
   response.writeHead(500);
   response.end(error);
 }
 
 
 Journeyman.prototype.use = function(func, name) {
-  var middleware = new Middleware(func.bind(this), name, this.middleware);
+  var middleware = new Middleware(func.bind(this), name, this.middleware, this);
 
   middleware.on('finished', this.handleMiddlewareFinish());
   middleware.on('started', this.handleMiddlewareStart());

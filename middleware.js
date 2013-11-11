@@ -2,19 +2,23 @@ var util         = require('util'),
     Profiler     = require('./profiler'),
     EventEmitter = require('events').EventEmitter;
 
-function Middleware(func, name, next) {
-  this.func = func;
-  this.next = next;
-  this.name = (name || 'default');
+function Middleware(func, name, next, server) {
+  this.func   = func;
+  this.next   = next;
+  this.server = server;
+  this.name   = (name || 'default');
 }
 
 util.inherits(Middleware, EventEmitter);
 
 Middleware.prototype.generateNext = function(req, res, profiler) {
-  return function() {
+  return function(err) {
     this.emit('finished', req, res, this.name, profiler.stop());
     res.switchBackEnd();
-    this.next.run(req, res);
+    if (err)
+      this.server.handleError(req, res, err);
+    else
+      this.next.run(req, res);
   }.bind(this)
 }
 
