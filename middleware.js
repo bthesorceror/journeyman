@@ -2,9 +2,9 @@ var util         = require('util'),
     Profiler     = require('./profiler'),
     EventEmitter = require('events').EventEmitter;
 
-function Middleware(func, name, next, server) {
+function Middleware(func, name, server) {
   this.func   = func;
-  this.next   = next;
+  this.next   = server.middleware;
   this.server = server;
   this.name   = (name || 'default');
 }
